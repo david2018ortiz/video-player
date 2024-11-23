@@ -36,9 +36,8 @@ const RatingStars = ({ rating }: { rating: number }) => {
         <Star
           key={star}
           size={14}
-          className={`${
-            star <= rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-          }`}
+          className={`${star <= rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+            }`}
         />
       ))}
     </div>
@@ -74,7 +73,7 @@ function App() {
         setLoading(false);
       }
     };
-  
+
     fetchVideos();
   }, []);
 
@@ -84,8 +83,7 @@ function App() {
 
   return (
     <div className="container">
-      <h1 className="text-3xl font-bold mb-8 text-center">Videos Destacados</h1>
-      <div className="video-grid md:grid-cols-2 lg:grid-cols-3">
+      <div className="video-grid">
         {videos.map((video) => (
           <motion.div
             key={video.id}
@@ -99,12 +97,14 @@ function App() {
               <h2 className="video-title">{video.title}</h2>
               <p className="video-description">{video.description}</p>
               <div className="video-meta">
-                <div className="meta-item">
-                  <Eye size={14} />
-                  {video.views.toLocaleString()} visualizaciones
-                </div>
-                <div className="meta-item">
-                  <RatingStars rating={video.rating} />
+                <div className="containerEstadisticas">
+                  <div className="meta-item">
+                    <Eye size={14} />
+                    {video.views.toLocaleString()} visualizaciones
+                  </div>
+                  <div className="meta-item">
+                    <RatingStars rating={video.rating} />
+                  </div>
                 </div>
                 <div className="meta-item">
                   <Calendar size={14} />

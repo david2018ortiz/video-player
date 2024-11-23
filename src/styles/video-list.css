@@ -1,10 +1,10 @@
 .container {
-  padding: 2rem;
+  padding: 15px;
 }
 
 .video-grid {
   display: grid;
-  gap: 2rem;
+  gap: 1rem;
 }
 
 .video-card {
@@ -13,44 +13,59 @@
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
+  max-width: 400px;
+  min-width: 300px;
+}
+
+.video {
+  width: -webkit-fill-available;
+  height: 300px;
 }
 
 .video-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-15px);
 }
 
 .video-info {
-  padding: 1rem;
+  padding: 5px 15px 15px 15px;
 }
 
 .video-title {
   font-size: 1.25rem;
   font-weight: 600;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0px;
   margin-top: 0px;
 }
 
 .video-description {
   font-size: 0.875rem;
   color: #4b5563;
-  margin-bottom: 1rem;
+  margin: 0 0 5px 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-align: left;
 }
 
 .video-meta {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  font-size: 0.75rem;
+  font-size: 10px;
   color: #6b7280;
 }
 
 .meta-item {
   display: flex;
   align-items: center;
+}
+
+.containerEstadisticas {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .meta-item svg {
@@ -61,9 +76,16 @@
   position: relative;
 }
 
+.controlVolumen {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
 .contenedorControles {
   position: absolute;
-  bottom: 20px;
+  bottom: 0;
   width: -webkit-fill-available;
   background: transparent;
   padding: 10px;
@@ -71,11 +93,101 @@
 
 input.barraProgreso {
   width: -webkit-fill-available;
-  padding: 10px;
+  height: 4px; /* Altura del slider */
+  appearance: none; /* Elimina el estilo predeterminado del navegador */
+  background: #ccc; /* Color del fondo del slider */
+  border-radius: 2px; /* Bordes redondeados */
+  outline: none; /* Elimina el borde azul al seleccionar */
+  cursor: pointer;
+  margin-bottom: 10px;
+}
+
+.barraProgreso::-webkit-slider-thumb {
+  appearance: none; /* Elimina el estilo predeterminado del navegador */
+  width: 12px; /* Tamaño del botón */
+  height: 12px; /* Tamaño del botón */
+  background: #000000; /* Color del botón */
+  border-radius: 50%; /* Botón redondeado */
+  border: 2px solid white; /* Borde blanco para destacar */
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra para un toque elegante */
+}
+
+.barraProgreso::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #000000;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .containerPlayPausa {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+}
+
+button {
+  padding: 8px 12px;
+  border: none;
+  outline: none !important;
+}
+
+.volumen {
+  width: 100px; /* Ancho del slider */
+  height: 4px; /* Altura del slider */
+  appearance: none; /* Elimina el estilo predeterminado del navegador */
+  background: #ccc; /* Color del fondo del slider */
+  border-radius: 2px; /* Bordes redondeados */
+  outline: none; /* Elimina el borde azul al seleccionar */
+  cursor: pointer;
+}
+
+.volumen::-webkit-slider-thumb {
+  appearance: none; /* Elimina el estilo predeterminado del navegador */
+  width: 12px; /* Tamaño del botón */
+  height: 12px; /* Tamaño del botón */
+  background: #000000; /* Color del botón */
+  border-radius: 50%; /* Botón redondeado */
+  border: 2px solid white; /* Borde blanco para destacar */
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra para un toque elegante */
+}
+
+.volumen::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #000000;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.volumen::-ms-thumb {
+  width: 12px;
+  height: 12px;
+  background: #000000;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@media (min-width: 768px) {
+  .video-grid {
+    grid-template-columns: repeat(1, 1fr);
+  }
+  .video-card {
+    max-width: 400px;
+    min-width: -webkit-fill-available;
+  }
+}
+
+@media (min-width: 1024px) {
+  .video-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }

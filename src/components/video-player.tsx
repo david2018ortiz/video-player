@@ -104,7 +104,7 @@ export function VideoPlayer({ src, poster }: VideoPlayerProps) {
 
                 <div className="containerPlayPausa">
                     {/* Control de volumen */}
-                    <div className="controVolumen">
+                    <div className="controlVolumen">
                         <button onClick={toggleMute} className="botonVolumen">
                             {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
                         </button>
