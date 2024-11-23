@@ -11,6 +11,7 @@ export function VideoPlayer({ src, poster }: VideoPlayerProps) {
     const [volume, setVolume] = useState(1); // Rango: 0 a 1
     const [progress, setProgress] = useState(0); // Rango: 0 a 100
     const [isMuted, setIsMuted] = useState(false);
+    const [showVolumeSlider, setShowVolumeSlider] = useState(false); // Controla la visibilidad de la barra de volumen
     const videoRef = useRef<HTMLVideoElement>(null);
 
     // Toggle reproducción
@@ -49,16 +50,21 @@ export function VideoPlayer({ src, poster }: VideoPlayerProps) {
             const newVolume = parseFloat(e.target.value);
             videoRef.current.volume = newVolume;
             setVolume(newVolume);
-            setIsMuted(newVolume === 0);
+            setIsMuted(newVolume === 0); // Actualiza mute si el volumen es 0
         }
     };
 
     // Toggle silencio
     const toggleMute = () => {
         if (videoRef.current) {
-            videoRef.current.muted = !isMuted;
+            if (isMuted) {
+                videoRef.current.volume = volume > 0 ? volume : 1;
+                setVolume(volume > 0 ? volume : 1);
+            } else {
+                videoRef.current.volume = 0;
+                setVolume(0);
+            }
             setIsMuted(!isMuted);
-            setVolume(videoRef.current.muted ? 0 : videoRef.current.volume);
         }
     };
 
@@ -68,13 +74,10 @@ export function VideoPlayer({ src, poster }: VideoPlayerProps) {
             if (videoRef.current.requestFullscreen) {
                 videoRef.current.requestFullscreen();
             } else if ((videoRef.current as any).webkitRequestFullscreen) {
-                // Para navegadores con prefijos (Safari)
                 (videoRef.current as any).webkitRequestFullscreen();
             } else if ((videoRef.current as any).mozRequestFullScreen) {
-                // Firefox
                 (videoRef.current as any).mozRequestFullScreen();
             } else if ((videoRef.current as any).msRequestFullscreen) {
-                // IE/Edge
                 (videoRef.current as any).msRequestFullscreen();
             }
         }
@@ -82,11 +85,29 @@ export function VideoPlayer({ src, poster }: VideoPlayerProps) {
 
     return (
         <div className="ContainerVideoPlayer">
+            {/* Imagen de previsualización */}
+            {!isPlaying && (
+                <div
+                    className="poster-overlay"
+                    onClick={togglePlay}
+                >
+                    <img
+                        src={poster}
+                        alt="Miniatura del video"
+                        className="object-cover"
+                    />
+                    <button className="play-button">
+                        <Play size={30} />
+                    </button>
+                </div>
+            )}
+
+            {/* Video */}
             <video
                 ref={videoRef}
                 src={src}
                 poster={poster}
-                className="video"
+                className={`video ${isPlaying ? "visible" : "hidden"}`}
                 onTimeUpdate={handleTimeUpdate}
             />
 
@@ -103,26 +124,37 @@ export function VideoPlayer({ src, poster }: VideoPlayerProps) {
                 />
 
                 <div className="containerPlayPausa">
-                    {/* Control de volumen */}
-                    <div className="controlVolumen">
-                        <button onClick={toggleMute} className="botonVolumen">
-                            {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
-                        </button>
-                        <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.1"
-                            value={volume}
-                            onChange={handleVolumeChange}
-                            className="volumen"
-                        />
-                    </div>
-
-                    {/* Botón de play/pausa */}
+                    
+                    <div className="playPausaVolumen">
+                        {/* Botón de play/pausa */}
                     <button onClick={togglePlay} className="botonPlayPausa">
                         {isPlaying ? <Pause size={15} /> : <Play size={15} />}
                     </button>
+
+                    {/* Control de volumen */}
+                    <div className="controlVolumen">
+                        <button
+                            onClick={() => {
+                                toggleMute();
+                                setShowVolumeSlider(!showVolumeSlider);
+                            }}
+                            className="botonVolumen"
+                        >
+                            {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
+                        </button>
+                        {showVolumeSlider && (
+                            <input
+                                type="range"
+                                min="0"
+                                max="1"
+                                step="0.1"
+                                value={volume}
+                                onChange={handleVolumeChange}
+                                className="volumen"
+                            />
+                        )}
+                    </div>
+                    </div>
 
                     {/* Botón de pantalla completa */}
                     <button onClick={handleFullscreen} className="pantallaCompleta">

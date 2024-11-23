@@ -19,6 +19,7 @@ interface Video {
   thumbnailUrl: string;
 }
 
+// Función para probar la conexión con Firestore
 const testConnection = async () => {
   try {
     const snapshot = await getDocs(collection(db, "videos"));
@@ -29,6 +30,7 @@ const testConnection = async () => {
   }
 };
 
+// Componente para mostrar estrellas de valoración
 const RatingStars = ({ rating }: { rating: number }) => {
   return (
     <div className="flex">
@@ -36,8 +38,9 @@ const RatingStars = ({ rating }: { rating: number }) => {
         <Star
           key={star}
           size={14}
-          className={`${star <= rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-            }`}
+          className={`${
+            star <= rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+          }`}
         />
       ))}
     </div>
@@ -49,7 +52,10 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    // Probar conexión con Firestore
     testConnection();
+
+    // Función para cargar videos desde Firestore
     const fetchVideos = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "videos"));
@@ -63,7 +69,7 @@ function App() {
             rating: data.valoracion || 0,
             uploadDate: data.createTime?.toDate().toISOString() || new Date().toISOString(),
             videoUrl: data.url || "",
-            thumbnailUrl: data.urlString || "",
+            thumbnailUrl: data.urlString || "", // Carga la miniatura desde Firestore
           };
         });
         setVideos(videoData);
@@ -92,6 +98,7 @@ function App() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
+            {/* Componente de reproductor con miniatura */}
             <VideoPlayer src={video.videoUrl} poster={video.thumbnailUrl} />
             <div className="video-info">
               <h2 className="video-title">{video.title}</h2>

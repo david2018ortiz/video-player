@@ -14,7 +14,7 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
   max-width: 400px;
-  min-width: 300px;
+  min-width: 350px;
 }
 
 .video {
@@ -77,6 +77,13 @@
   position: relative;
 }
 
+.playPausaVolumen {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+}
+
 .controlVolumen {
   display: flex;
   flex-direction: row;
@@ -90,6 +97,7 @@
   width: -webkit-fill-available;
   background: transparent;
   padding: 10px;
+  z-index: 10;
 }
 
 input.barraProgreso {
@@ -176,6 +184,76 @@ button {
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+
+.poster-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 10;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.poster-overlay img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.play-button {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  z-index: 20;
+  top: 40%;
+  left: calc(50% - 30px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(199, 199, 199, 0.8);
+  border-radius: 50%;
+  transition: transform 0.2s ease-in-out;
+}
+
+.play-button:hover {
+  transform: scale(1.1);
+}
+
+.controlVolumen {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.volumen {
+  display: inline-block;
+  height: 4px;
+  background: #ccc;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.volumen::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #6c63ff;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+}
+
+.volumen::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #6c63ff;
+  border-radius: 50%;
+  border: 2px solid white;
+  cursor: pointer;
+}
+
 
 @media (min-width: 768px) {
   .video-grid {
