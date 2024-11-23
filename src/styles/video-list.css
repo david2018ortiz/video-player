@@ -1,10 +1,13 @@
 .container {
   padding: 15px;
+  scrollbar-width: none !important;
 }
 
 .video-grid {
   display: grid;
   gap: 1rem;
+  scrollbar-width: none !important;
+  overflow: hidden;
 }
 
 .video-card {
