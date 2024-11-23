@@ -56,4 +56,35 @@
     margin-right: 0.25rem;
   }
   
+  .video-controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.6);
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+  
+  .video-controls input[type="range"] {
+    width: 100%;
+    appearance: none;
+    background: #ccc;
+    height: 4px;
+    border-radius: 2px;
+    outline: none;
+    margin: 0.5rem 0;
+  }
+  
+  .video-controls input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: white;
+    border-radius: 50%;
+    cursor: pointer;
+  }
+  
   
