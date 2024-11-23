@@ -1,6 +1,5 @@
 import { useState, useRef } from "react";
 import { Play, Pause, Maximize2, Volume2, VolumeX } from "lucide-react";
-import { motion } from "framer-motion";
 
 interface VideoPlayerProps {
     src: string;
