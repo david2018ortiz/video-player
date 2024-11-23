@@ -81,17 +81,17 @@ export function VideoPlayer({ src, poster }: VideoPlayerProps) {
     };
 
     return (
-        <div className="relative aspect-video bg-black">
+        <div className="ContainerVideoPlayer">
             <video
                 ref={videoRef}
                 src={src}
                 poster={poster}
-                className="w-full h-full object-cover"
+                className="video"
                 onTimeUpdate={handleTimeUpdate}
             />
 
             {/* Controles */}
-            <div className="absolute bottom-0 left-0 right-0 p-3 bg-black bg-opacity-50 flex flex-col items-center">
+            <div className="contenedorControles">
                 {/* Barra de progreso */}
                 <input
                     type="range"
@@ -99,19 +99,14 @@ export function VideoPlayer({ src, poster }: VideoPlayerProps) {
                     max="100"
                     value={progress}
                     onChange={handleSeek}
-                    className="w-full mb-2"
+                    className="barraProgreso"
                 />
 
-                <div className="flex items-center justify-between w-full">
-                    {/* Botón de play/pausa */}
-                    <button onClick={togglePlay} className="text-white p-2">
-                        {isPlaying ? <Pause size={24} /> : <Play size={24} />}
-                    </button>
-
+                <div className="containerPlayPausa">
                     {/* Control de volumen */}
-                    <div className="flex items-center">
-                        <button onClick={toggleMute} className="text-white p-2">
-                            {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+                    <div className="controVolumen">
+                        <button onClick={toggleMute} className="botonVolumen">
+                            {isMuted ? <VolumeX size={15} /> : <Volume2 size={15} />}
                         </button>
                         <input
                             type="range"
@@ -120,13 +115,18 @@ export function VideoPlayer({ src, poster }: VideoPlayerProps) {
                             step="0.1"
                             value={volume}
                             onChange={handleVolumeChange}
-                            className="ml-2"
+                            className="volumen"
                         />
                     </div>
 
+                    {/* Botón de play/pausa */}
+                    <button onClick={togglePlay} className="botonPlayPausa">
+                        {isPlaying ? <Pause size={15} /> : <Play size={15} />}
+                    </button>
+
                     {/* Botón de pantalla completa */}
-                    <button onClick={handleFullscreen} className="text-white p-2">
-                        <Maximize2 size={24} />
+                    <button onClick={handleFullscreen} className="pantallaCompleta">
+                        <Maximize2 size={15} />
                     </button>
                 </div>
             </div>
