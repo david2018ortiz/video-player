@@ -1,0 +1,29 @@
+.navigation {
+    background-color: var(--primary-color);
+    padding: 1rem 0;
+  }
+  
+  .navigation ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+  }
+  
+  .navigation li {
+    margin: 0 1rem;
+  }
+  
+  .navigation a {
+    color: white;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.3s ease;
+  }
+  
+  .navigation a:hover {
+    color: var(--secondary-color);
+  }
+  
+  

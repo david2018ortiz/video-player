@@ -1,12 +1,15 @@
-// App.tsx
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
-import { VideoPlayer } from "./components/video-player";
-import { Star, Eye, Calendar } from "lucide-react";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "./firebaseConfig"; // Ajusta la ruta según donde crees este archivo
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "./firebaseConfig";
+import Login from "./components/Login";
+import { Home } from "./components/Home";
+import Navigation from "./components/Navigation";
+import Posts from "./components/Posts";
+import { VideoPlayer } from "./components/VideoPlayer";
 import "./App.css";
-import "./styles/video-list.css"; // Asegúrate de incluir este estilo
+import "./styles/video-list.css";
 
 interface Video {
   id: string;
@@ -19,59 +22,38 @@ interface Video {
   thumbnailUrl: string;
 }
 
-// Función para probar la conexión con Firestore
-const testConnection = async () => {
-  try {
-    const snapshot = await getDocs(collection(db, "videos"));
-    console.log("Conexión exitosa. Datos recibidos:");
-    snapshot.forEach((doc) => console.log(doc.id, "=>", doc.data()));
-  } catch (error) {
-    console.error("Error al conectar con Firestore:", error);
-  }
-};
-
-// Componente para mostrar estrellas de valoración
-const RatingStars = ({ rating }: { rating: number }) => {
-  return (
-    <div className="flex">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <Star
-          key={star}
-          size={14}
-          className={`${
-            star <= rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
-          }`}
-        />
-      ))}
-    </div>
-  );
-};
+interface User {
+  uid: string;
+  email: string;
+  display_name: string;
+  status: string;
+  role: string;
+  phone_number: string;
+  pay_time: string;
+  created_time: string;
+  plan_name: string;
+}
 
 function App() {
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Probar conexión con Firestore
-    testConnection();
-
-    // Función para cargar videos desde Firestore
+    // Fetch videos from Firestore
     const fetchVideos = async () => {
       try {
         const querySnapshot = await getDocs(collection(db, "videos"));
-        const videoData = querySnapshot.docs.map((doc) => {
-          const data = doc.data();
-          return {
-            id: doc.id,
-            title: data.titulo || "Sin título",
-            description: data.descripcion || "Sin descripción",
-            views: data.visualizaciones || 0,
-            rating: data.valoracion || 0,
-            uploadDate: data.createTime?.toDate().toISOString() || new Date().toISOString(),
-            videoUrl: data.url || "",
-            thumbnailUrl: data.urlString || "", // Carga la miniatura desde Firestore
-          };
-        });
+        const videoData = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          title: doc.data().titulo || "Sin título",
+          description: doc.data().descripcion || "Sin descripción",
+          views: doc.data().visualizaciones || 0,
+          rating: doc.data().valoracion || 0,
+          uploadDate: doc.data().createTime?.toDate().toISOString() || new Date().toISOString(),
+          videoUrl: doc.data().url || "",
+          thumbnailUrl: doc.data().urlString || "",
+        }));
         setVideos(videoData);
         setLoading(false);
       } catch (error) {
@@ -80,49 +62,80 @@ function App() {
       }
     };
 
+    // Handle user authentication state
+    const handleAuthStateChange = () => {
+      const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+        if (firebaseUser) {
+          const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+          if (userDoc.exists()) {
+            setUser(userDoc.data() as User);
+          } else {
+            setUser(null);
+            await auth.signOut();
+          }
+        } else {
+          setUser(null);
+        }
+        setLoading(false);
+      });
+
+      return unsubscribe;
+    };
+
     fetchVideos();
+    const unsubscribe = handleAuthStateChange();
+
+    return () => unsubscribe();
   }, []);
 
+  const handleLogout = async () => {
+    await auth.signOut();
+    setUser(null);
+  };
+
   if (loading) {
-    return <div className="loading">Cargando videos...</div>;
+    return <div className="loading">Cargando...</div>;
+  }
+
+  if (!user) {
+    return <Login setUser={setUser} />;
   }
 
   return (
-    <div className="container">
-      <div className="video-grid">
-        {videos.map((video) => (
-          <motion.div
-            key={video.id}
-            className="video-card"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            {/* Componente de reproductor con miniatura */}
-            <VideoPlayer src={video.videoUrl} poster={video.thumbnailUrl} />
-            <div className="video-info">
-              <h2 className="video-title">{video.title}</h2>
-              <p className="video-description">{video.description}</p>
-              <div className="video-meta">
-                <div className="containerEstadisticas">
-                  <div className="meta-item">
-                    <Eye size={14} />
-                    {video.views.toLocaleString()} visualizaciones
-                  </div>
-                  <div className="meta-item">
-                    <RatingStars rating={video.rating} />
-                  </div>
-                </div>
-                <div className="meta-item">
-                  <Calendar size={14} />
-                  {new Date(video.uploadDate).toLocaleDateString()}
-                </div>
+    <Router>
+      {user && <Navigation />}
+      <Routes>
+        <Route path="/" element={<Home user={user} onLogout={handleLogout} />} />
+        <Route
+          path="/videos"
+          element={
+            user.role === "premium" ? (
+              <div className="video-grid">
+                {videos.map((video) => (
+                  <VideoPlayer
+                    key={video.id}
+                    {...video} // Pasamos todas las propiedades del video como props
+                  />
+                ))}
               </div>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route
+          path="/posts"
+          element={
+            user.role === "premium" ? (
+              <Posts role={user.role} />
+            ) : (
+              <Navigate to="/" />
+            )
+          }
+        />
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
   );
 }
 
