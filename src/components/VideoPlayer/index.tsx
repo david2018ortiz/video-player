@@ -98,7 +98,6 @@ export function VideoPlayer({
         <video
           ref={videoRef}
           src={videoUrl}
-          poster={thumbnailUrl}
           className="video"
           onTimeUpdate={handleTimeUpdate}
         />
