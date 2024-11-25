@@ -11,7 +11,8 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: var(--background-color);
+    background-color: white;
+    padding: 25px;
   }
   
   .login-form {
@@ -19,18 +20,23 @@
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
+    width: -webkit-fill-available;
     max-width: 400px;
+  }
+
+  .logo {
+    width: -webkit-fill-available;
+    max-width: 200px;
   }
   
   .login-form h2 {
     text-align: center;
-    color: var(--primary-color);
+    color: black;
     margin-bottom: 1.5rem;
   }
   
   .login-form input {
-    width: 100%;
+    width: -webkit-fill-available;
     padding: 0.75rem;
     margin-bottom: 1rem;
     border: 1px solid #ddd;
@@ -39,9 +45,9 @@
   }
   
   .login-form button {
-    width: 100%;
+    width: -webkit-fill-available;
     padding: 0.75rem;
-    background-color: var(--primary-color);
+    background-color: black;
     color: white;
     border: none;
     border-radius: 4px;
@@ -51,7 +57,9 @@
   }
   
   .login-form button:hover {
-    background-color: var(--secondary-color);
+    background-color: white;
+    border: solid 1px black;
+    color: black;
   }
   
   .error-message {

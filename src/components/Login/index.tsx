@@ -43,6 +43,7 @@ const Login: React.FC<LoginProps> = ({ setUser }) => {
   return (
     <div className="login-container">
       <form onSubmit={handleLogin} className="login-form">
+        <img src="https://girlvaleria.shop/wp-content/uploads/2024/11/icono-svg.svg" alt="" className="logo" />
         <h2>Iniciar Sesión</h2>
         <input
           type="email"
