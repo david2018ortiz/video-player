@@ -7,7 +7,7 @@ const Navigation: React.FC = () => {
     <nav className="navigation">
       <ul>
         <li><Link to="/">Inicio</Link></li>
-        <li><Link to="/posts">Posts</Link></li>
+        <li><Link to="/posts">Imagenes</Link></li>
         <li><Link to="/videos">Videos</Link></li>
       </ul>
     </nav>
@@ -15,4 +15,3 @@ const Navigation: React.FC = () => {
 };
 
 export default Navigation;
-

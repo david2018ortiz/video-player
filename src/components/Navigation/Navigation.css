@@ -1,5 +1,6 @@
 .navigation {
-    background-color: var(--primary-color);
+    width: 100%;
+    background-color: #944b9b;
     padding: 1rem 0;
   }
   
@@ -16,14 +17,14 @@
   }
   
   .navigation a {
-    color: white;
+    color: white;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      
     text-decoration: none;
     font-size: 1rem;
     transition: color 0.3s ease;
   }
   
   .navigation a:hover {
-    color: var(--secondary-color);
+    color: black;
   }
   
   

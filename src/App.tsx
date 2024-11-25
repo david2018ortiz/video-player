@@ -9,7 +9,6 @@ import Navigation from "./components/Navigation";
 import Posts from "./components/Posts";
 import { VideoPlayer } from "./components/VideoPlayer";
 import "./App.css";
-import "./styles/video-list.css";
 
 interface Video {
   id: string;
@@ -20,6 +19,16 @@ interface Video {
   uploadDate: string;
   videoUrl: string;
   thumbnailUrl: string;
+}
+
+interface Post {
+  id: string;
+  title: string;
+  description: string;
+  images: string[];
+  views: number;
+  rating: number;
+  create_time: string;
 }
 
 interface User {
@@ -36,15 +45,16 @@ interface User {
 
 function App() {
   const [videos, setVideos] = useState<Video[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]); // Estado para los posts
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    // Fetch videos from Firestore
-    const fetchVideos = async () => {
+    const fetchData = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "videos"));
-        const videoData = querySnapshot.docs.map((doc) => ({
+        // Fetch videos from Firestore
+        const videoQuerySnapshot = await getDocs(collection(db, "videos"));
+        const videoData = videoQuerySnapshot.docs.map((doc) => ({
           id: doc.id,
           title: doc.data().titulo || "Sin título",
           description: doc.data().descripcion || "Sin descripción",
@@ -55,38 +65,81 @@ function App() {
           thumbnailUrl: doc.data().urlString || "",
         }));
         setVideos(videoData);
-        setLoading(false);
+
+        // Fetch posts from Firestore
+        const postQuerySnapshot = await getDocs(collection(db, "posts"));
+        const postsData = postQuerySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          title: doc.data().titulo || "Sin título",
+          description: doc.data().description || "Sin descripción",
+          images: doc.data().images || [],
+          views: doc.data().visualizaciones || 0,
+          rating: doc.data().valoracion || 0,
+          create_time: doc.data().create_time?.toDate().toISOString() || "",
+        }));
+        setPosts(postsData);
       } catch (error) {
-        console.error("Error al cargar los videos:", error);
+        if (error instanceof Error) {
+          console.error("Error al cargar los datos de Firestore:", error.message);
+        } else {
+          console.error("Error inesperado:", error);
+        }
+      } finally {
         setLoading(false);
       }
     };
 
-    // Handle user authentication state
     const handleAuthStateChange = () => {
       const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
         if (firebaseUser) {
-          const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
-          if (userDoc.exists()) {
-            setUser(userDoc.data() as User);
-          } else {
+          try {
+            const userDoc = await getDoc(doc(db, "users", firebaseUser.uid));
+            if (userDoc.exists()) {
+              const data = userDoc.data();
+              const userData: User = {
+                uid: firebaseUser.uid,
+                email: data.email || "",
+                display_name: data.display_name || "",
+                status: data.status || "",
+                role: data.role || "",
+                phone_number: data.phone_number || "",
+                pay_time: data.pay_time?.toDate().toISOString() || "",
+                created_time: data.created_time?.toDate().toISOString() || "",
+                plan_name: data.plan_name || "",
+              };
+              setUser(userData);
+
+              // Fetch Firestore data after user authentication
+              await fetchData();
+            } else {
+              console.error("Usuario no encontrado en Firestore.");
+              setUser(null);
+              await auth.signOut();
+            }
+          } catch (error) {
+            if (error instanceof Error) {
+              console.error("Error al obtener el documento del usuario:", error.message);
+            } else {
+              console.error("Error inesperado:", error);
+            }
             setUser(null);
             await auth.signOut();
           }
         } else {
           setUser(null);
+          setLoading(false);
         }
-        setLoading(false);
       });
 
       return unsubscribe;
     };
 
-    fetchVideos();
     const unsubscribe = handleAuthStateChange();
 
     return () => unsubscribe();
   }, []);
+
+
 
   const handleLogout = async () => {
     await auth.signOut();
@@ -127,7 +180,7 @@ function App() {
           path="/posts"
           element={
             user.role === "premium" ? (
-              <Posts role={user.role} />
+              <Posts user={user} posts={posts} />
             ) : (
               <Navigate to="/" />
             )

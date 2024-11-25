@@ -1,6 +1,7 @@
 import { useState, useRef } from "react";
 import { Play, Pause, Maximize2, Volume2, VolumeX, Eye, Star, Calendar } from "lucide-react";
 import { motion } from "framer-motion";
+import "./VideoPlayer.css";
 
 interface VideoProps {
   title: string;
@@ -83,24 +84,60 @@ export function VideoPlayer({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      {/* Miniatura del video */}
-      <div className="poster-overlay" onClick={togglePlay}>
-        {!isPlaying && <img src={thumbnailUrl} alt="Miniatura del video" />}
-        {!isPlaying && (
-          <button className="play-button">
-            <Play size={30} />
-          </button>
-        )}
-      </div>
+      <div className="containerVideo">
+        {/* Miniatura del video */}
+        <div className="poster-overlay" onClick={togglePlay}>
+          {!isPlaying && <img src={thumbnailUrl} alt="Miniatura del video" />}
+          {!isPlaying && (
+            <button className="play-button">
+              <Play size={15} />
+            </button>
+          )}
+        </div>
+        {/* Elemento de video */}
+        <video
+          ref={videoRef}
+          src={videoUrl}
+          poster={thumbnailUrl}
+          className="video"
+          onTimeUpdate={handleTimeUpdate}
+        />
+        <div className="controls">
+          <div className="container-1">
+            <input
+              type="range"
+              min="0"
+              max="100"
+              value={progress}
+              onChange={handleSeek}
+            />
+          </div>
+          <div className="container-2">
+            <div className="container-3">
+              <div className="container-4">
+                <button onClick={togglePlay}>
+                  {isPlaying ? <Pause size={14} /> : <Play size={14} />}
+                </button>
+                <button onClick={toggleMute}>
+                  {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
+                </button>
+                <input
+                  type="range"
+                  min="0"
+                  max="1"
+                  step="0.1"
+                  value={volume}
+                  onChange={handleVolumeChange}
+                />
+              </div>
+              <button onClick={handleFullscreen}>
+                <Maximize2 size={14} />
+              </button>
+            </div>
 
-      {/* Elemento de video */}
-      <video
-        ref={videoRef}
-        src={videoUrl}
-        poster={thumbnailUrl}
-        className="video"
-        onTimeUpdate={handleTimeUpdate}
-      />
+          </div>
+        </div>
+      </div>
 
       {/* Información del video */}
       <div className="video-info">
@@ -120,32 +157,6 @@ export function VideoPlayer({
       </div>
 
       {/* Controles del reproductor */}
-      <div className="controls">
-        <input
-          type="range"
-          min="0"
-          max="100"
-          value={progress}
-          onChange={handleSeek}
-        />
-        <button onClick={togglePlay}>
-          {isPlaying ? <Pause /> : <Play />}
-        </button>
-        <button onClick={toggleMute}>
-          {isMuted ? <VolumeX /> : <Volume2 />}
-        </button>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.1"
-          value={volume}
-          onChange={handleVolumeChange}
-        />
-        <button onClick={handleFullscreen}>
-          <Maximize2 />
-        </button>
-      </div>
     </motion.div>
   );
 }
