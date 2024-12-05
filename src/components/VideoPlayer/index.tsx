@@ -72,8 +72,22 @@ export function VideoPlayer({
   };
 
   const handleFullscreen = () => {
-    if (videoRef.current?.requestFullscreen) {
-      videoRef.current.requestFullscreen();
+    try {
+      if (videoRef.current) {
+        if (videoRef.current.requestFullscreen) {
+          videoRef.current.requestFullscreen();
+        } else if ((videoRef.current as any).webkitRequestFullscreen) {
+          (videoRef.current as any).webkitRequestFullscreen(); // Safari
+        } else if ((videoRef.current as any).mozRequestFullScreen) {
+          (videoRef.current as any).mozRequestFullScreen(); // Firefox
+        } else if ((videoRef.current as any).msRequestFullscreen) {
+          (videoRef.current as any).msRequestFullscreen(); // IE/Edge
+        } else {
+          console.warn("Fullscreen API no es compatible con este navegador.");
+        }
+      }
+    } catch (error) {
+      console.error("Error al intentar fullscreen:", error);
     }
   };
 
@@ -133,7 +147,6 @@ export function VideoPlayer({
                 <Maximize2 size={14} />
               </button>
             </div>
-
           </div>
         </div>
       </div>
@@ -154,8 +167,6 @@ export function VideoPlayer({
           </div>
         </div>
       </div>
-
-      {/* Controles del reproductor */}
     </motion.div>
   );
 }
